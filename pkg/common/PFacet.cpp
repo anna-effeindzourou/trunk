@@ -25,38 +25,38 @@ boost::tuple<Vector3r,bool, double, double,double> Ig2_Sphere_PFacet_ScGridCoGeo
 	Vector3r center=vertices[0]+((vertices[2]-vertices[0])*(vertices[1]-vertices[0]).norm()+(vertices[1]-vertices[0])*(vertices[2]-vertices[0]).norm())/((vertices[1]-vertices[0]).norm()+(vertices[2]-vertices[1]).norm()+(vertices[0]-vertices[2]).norm());
 
 	
-	Vector3r e[3] = {vertices[1]-vertices[0] ,vertices[2]-vertices[1] ,vertices[0]-vertices[2]};
-	Vector3r normal = e[0].cross(e[1])/((e[0].cross(e[1])).norm());
+	const Vector3r e[3] = {vertices[1]-vertices[0] ,vertices[2]-vertices[1] ,vertices[0]-vertices[2]};
+	const Vector3r normal = e[0].cross(e[1])/((e[0].cross(e[1])).norm());
 
 // 	Vector3r centerS=sphereSt->pos+shift2;//FIXME: periodicity?
 	const Vector3r& centerS=sphereSt->pos;
-	Vector3r cl=centerS-center;	
+	const Vector3r cl=centerS-center;	
 	 
-	Real dist=normal.dot(cl);
+	const Real dist=normal.dot(cl);
 
 	if (dist<0) {normal=-normal; dist=-dist;}
 	
-	Vector3r P =center+(cl - dist*normal);
+	const Vector3r P =center+(cl - dist*normal);
 	
-	Vector3r v0 = vertices[1] - vertices[0];
-	Vector3r v1 = vertices[2] - vertices[0];
-	Vector3r v2 = P - vertices[0];
+	const Vector3r v0 = vertices[1] - vertices[0];
+	const Vector3r v1 = vertices[2] - vertices[0];
+	const Vector3r v2 = P - vertices[0];
 	
 	// Compute dot products
-	Real dot00 = v0.dot(v0);
-	Real dot01 = v0.dot(v1);
-	Real dot02 = v0.dot(v2);
-	Real dot11 = v1.dot(v1);
-	Real dot12 = v1.dot(v2);
+	const Real dot00 = v0.dot(v0);
+	const Real dot01 = v0.dot(v1);
+	const Real dot02 = v0.dot(v2);
+	const Real dot11 = v1.dot(v1);
+	const Real dot12 = v1.dot(v2);
 	
 	// Compute the barycentric coordinates of the projection P
-	Real  invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
-	Real p1 = (dot11 * dot02 - dot01 * dot12) * invDenom;
-	Real p2 = (dot00 * dot12 - dot01 * dot02) * invDenom;
-	Real p3 = 1-p1-p2;
+	const Real  invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+	const Real p1 = (dot11 * dot02 - dot01 * dot12) * invDenom;
+	const Real p2 = (dot00 * dot12 - dot01 * dot02) * invDenom;
+	const Real p3 = 1-p1-p2;
 
 	// Check if P is in triangle
-	bool isintriangle= (p1 > 0) && (p2 > 0) && (p1 + p2 < 1);
+	const bool isintriangle= (p1 > 0) && (p2 > 0) && (p1 + p2 < 1);
 	return boost::make_tuple(P,isintriangle,p1,p2,p3);
 }
 
