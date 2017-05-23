@@ -26,13 +26,13 @@ boost::tuple<Vector3r,bool, double, double,double> Ig2_Sphere_PFacet_ScGridCoGeo
 
 	
 	const Vector3r e[3] = {vertices[1]-vertices[0] ,vertices[2]-vertices[1] ,vertices[0]-vertices[2]};
-	const Vector3r normal = e[0].cross(e[1])/((e[0].cross(e[1])).norm());
+	Vector3r normal = e[0].cross(e[1])/((e[0].cross(e[1])).norm());
 
 // 	Vector3r centerS=sphereSt->pos+shift2;//FIXME: periodicity?
 	const Vector3r& centerS=sphereSt->pos;
 	const Vector3r cl=centerS-center;	
 	 
-	const Real dist=normal.dot(cl);
+	Real dist=normal.dot(cl);
 
 	if (dist<0) {normal=-normal; dist=-dist;}
 	
@@ -113,18 +113,18 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 	
 	boost::tuple <Vector3r,bool, double, double,double> projectionres = projection(cm2, state1);
 	Vector3r P = boost::get<0>(projectionres);
-	bool isintriangle = boost::get<1>(projectionres);
-	Real p1 = boost::get<2>(projectionres);
-	Real p2 = boost::get<3>(projectionres);
-	Real p3 = boost::get<4>(projectionres);
+	const bool isintriangle = boost::get<1>(projectionres);
+	const Real p1 = boost::get<2>(projectionres);
+	const Real p2 = boost::get<3>(projectionres);
+	const Real p3 = boost::get<4>(projectionres);
 	
 	
 	shared_ptr<Body> GridList[3]={Pfacet->conn1,Pfacet->conn2,Pfacet->conn3};
 
 	// Check if the projection of the contact point is inside the triangle 
-	bool isconn1=((p1 > 0) && (p2 <= 0) && (p1 + p2 < 1))||((p1 > 0) && (p2 <= 0) && (p1 + p2 >= 1));
-	bool isconn2=((p1 > 0) && (p2 > 0) && (p1 + p2 >= 1))||((p1 <= 0) && (p2 > 0) && (p1 + p2 >= 1));
-	bool isconn3=((p1 <= 0) && (p2 > 0) && (p1 + p2 < 1))||((p1 <= 0) && (p2 <= 0) && (p1 + p2 < 1));
+	const bool isconn1=((p1 > 0) && (p2 <= 0) && (p1 + p2 < 1))||((p1 > 0) && (p2 <= 0) && (p1 + p2 >= 1));
+	const bool isconn2=((p1 > 0) && (p2 > 0) && (p1 + p2 >= 1))||((p1 <= 0) && (p2 > 0) && (p1 + p2 >= 1));
+	const bool isconn3=((p1 <= 0) && (p2 > 0) && (p1 + p2 < 1))||((p1 <= 0) && (p2 <= 0) && (p1 + p2 < 1));
 	
 	Real penetrationDepth=0;
 	int connnum=-1;
