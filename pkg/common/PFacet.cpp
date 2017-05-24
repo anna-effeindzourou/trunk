@@ -12,7 +12,7 @@
 
 //!##################	IGeom Functors   #####################
 // Function used in order to calculate the projection of the sphere on the PFacet element. The function returns if the the porjection is on the inside the triangle and the barycentric coordinates of the projection P on PFacet the element.
-boost::tuple<Vector3r,bool, double, double,double> Ig2_Sphere_PFacet_ScGridCoGeom::projection(
+boost::tuple<Vector3r,bool, double, double,double,Real,Vector3r> Ig2_Sphere_PFacet_ScGridCoGeom::projection(
 						const shared_ptr<Shape>& cm2, const State& state1)
 {
 	const State* sphereSt = YADE_CAST<const State*>(&state1);
@@ -57,7 +57,7 @@ boost::tuple<Vector3r,bool, double, double,double> Ig2_Sphere_PFacet_ScGridCoGeo
 
 	// Check if P is in triangle
 	const bool isintriangle= (p1 > 0) && (p2 > 0) && (p1 + p2 < 1);
-	return boost::make_tuple(P,isintriangle,p1,p2,p3);
+	return boost::make_tuple(P,isintriangle,p1,p2,p3,dist,normal);
 }
 
 
@@ -70,26 +70,21 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 
 	Sphere* sphere = YADE_CAST<Sphere*>(cm1.get());
 	PFacet* Pfacet = YADE_CAST<PFacet*>(cm2.get());
-	
 	const State* sphereSt = YADE_CAST<const State*>(&state1);
 	
 	Real sphereRadius = sphere->radius;
 	Real PFacetradius=Pfacet->radius;
 
-	vector<Vector3r> vertices;
-	vertices.push_back(Pfacet->node1->state->pos);
-	vertices.push_back(Pfacet->node2->state->pos);
-	vertices.push_back(Pfacet->node3->state->pos);
-	Vector3r center=vertices[0]+((vertices[2]-vertices[0])*(vertices[1]-vertices[0]).norm()+(vertices[1]-vertices[0])*(vertices[2]-vertices[0]).norm())/((vertices[1]-vertices[0]).norm()+(vertices[2]-vertices[1]).norm()+(vertices[0]-vertices[2]).norm());
-
+	const Vector3r& centerS=sphereSt->pos;	
+	boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> projectionres = projection(cm2, state1);
+	Vector3r P = boost::get<0>(projectionres);
+	const bool isintriangle = boost::get<1>(projectionres);
+	const Real p1 = boost::get<2>(projectionres);
+	const Real p2 = boost::get<3>(projectionres);
+	const Real p3 = boost::get<4>(projectionres);
+	Real dist= boost::get<5>(projectionres);
+	Vector3r normal = boost::get<6>(projectionres);
 	
-	Vector3r e[3] = {vertices[1]-vertices[0] ,vertices[2]-vertices[1] ,vertices[0]-vertices[2]};
-	Vector3r normal = e[0].cross(e[1])/((e[0].cross(e[1])).norm());
-
-// 	Vector3r centerS=sphereSt->pos+shift2;//FIXME: periodicity?
-	const Vector3r& centerS=sphereSt->pos;
-	Vector3r cl=centerS-center;	
-	Real dist=normal.dot(cl);
 	
 	shared_ptr<ScGridCoGeom> scm;
 	bool isNew = !(c->geom);
@@ -109,16 +104,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 		return false;
 	}
 	if (dist<0) {normal=-normal; dist=-dist;}
-	
-	
-	boost::tuple <Vector3r,bool, double, double,double> projectionres = projection(cm2, state1);
-	Vector3r P = boost::get<0>(projectionres);
-	const bool isintriangle = boost::get<1>(projectionres);
-	const Real p1 = boost::get<2>(projectionres);
-	const Real p2 = boost::get<3>(projectionres);
-	const Real p3 = boost::get<4>(projectionres);
-	
-	
+
 	shared_ptr<Body> GridList[3]={Pfacet->conn1,Pfacet->conn2,Pfacet->conn3};
 
 	// Check if the projection of the contact point is inside the triangle 
@@ -136,7 +122,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 			for (int unsigned i=0; i<3;i++){
 				for(int unsigned j=0;j<GridNodeList[i]->pfacetList.size();j++){
 					if(GridNodeList[i]->pfacetList[j]->getId()!=c->id2){
-						boost::tuple <Vector3r,bool, double, double,double> projectionPrev = projection(GridNodeList[i]->pfacetList[j]->shape,state1);
+						boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> projectionPrev = projection(GridNodeList[i]->pfacetList[j]->shape,state1);
 						bool isintrianglePrev = boost::get<1>(projectionPrev);
 						if(!isintrianglePrev){	//if(!isintrianglePrev)
 							const shared_ptr<Interaction> intr = scene->interactions->find(c->id1,GridNodeList[i]->pfacetList[j]->getId());
@@ -168,7 +154,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 			for (int unsigned i=0; i<3;i++){
 				for(int unsigned j=0;j<GridNodeList[i]->pfacetList.size();j++){
 					if(GridNodeList[i]->pfacetList[j]->getId()!=c->id2){
-						boost::tuple <Vector3r,bool, double, double,double> projectionPrev = projection(GridNodeList[i]->pfacetList[j]->shape,state1);
+						boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> projectionPrev = projection(GridNodeList[i]->pfacetList[j]->shape,state1);
 						bool isintrianglePrev = boost::get<1>(projectionPrev);
 						if(isintrianglePrev){
 							const shared_ptr<Interaction> intr = scene->interactions->find(c->id1,GridNodeList[i]->pfacetList[j]->getId());
@@ -392,7 +378,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 			for (int unsigned i=0; i<3;i++){
 				for(int unsigned j=0;j<GridNodeList[i]->pfacetList.size();j++){
 					if(GridNodeList[i]->pfacetList[j]->getId()!=c->id2){
-						boost::tuple <Vector3r,bool, double, double,double> projectionPrev = projection(GridNodeList[i]->pfacetList[j]->shape,state1);
+						boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> projectionPrev = projection(GridNodeList[i]->pfacetList[j]->shape,state1);
 						bool isintrianglePrev = boost::get<1>(projectionPrev);
 						if(!isintrianglePrev){	
 						//if the sphere projection is outside both the current PFacet AND this neighbouring PFacet, then create the interaction if the neighbour did not already do it before.
@@ -521,13 +507,13 @@ bool Ig2_PFacet_PFacet_ScGeom::go( const shared_ptr<Shape>& cm1, const shared_pt
 	  || Pfacet1->node3==Pfacet2->node1 || Pfacet1->node3==Pfacet2->node2|| Pfacet1->node3==Pfacet2->node3 ){ return false;}
 	
 	
-	boost::tuple <Vector3r,bool, double, double,double> p1 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm1,* Pfacet2->node1->state);
-	boost::tuple <Vector3r,bool, double, double,double> p2 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm1,* Pfacet2->node2->state);
-	boost::tuple <Vector3r,bool, double, double,double> p3 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm1,* Pfacet2->node3->state);
+	boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> p1 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm1,* Pfacet2->node1->state);
+	boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> p2 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm1,* Pfacet2->node2->state);
+	boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> p3 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm1,* Pfacet2->node3->state);
 
-	boost::tuple <Vector3r,bool, double, double,double> p4 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm2,* Pfacet1->node1->state);
-	boost::tuple <Vector3r,bool, double, double,double> p5 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm2,* Pfacet1->node2->state);
-	boost::tuple <Vector3r,bool, double, double,double> p6 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm2,* Pfacet1->node3->state);
+	boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> p4 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm2,* Pfacet1->node1->state);
+	boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> p5 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm2,* Pfacet1->node2->state);
+	boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> p6 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm2,* Pfacet1->node3->state);
 	
 	bool isintriangle1 = boost::get<1>(p1);
 	bool isintriangle2 = boost::get<1>(p2);
