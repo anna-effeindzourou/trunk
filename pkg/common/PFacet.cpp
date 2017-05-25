@@ -76,6 +76,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 	Real PFacetradius=Pfacet->radius;
 
 	const Vector3r& centerS=sphereSt->pos;	
+	
 	boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> projectionres = projection(cm2, state1);
 	Vector3r P = boost::get<0>(projectionres);
 	const bool isintriangle = boost::get<1>(projectionres);
@@ -173,7 +174,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 				}	  
 			}
 			//SPhere-cylinder contact
-			const State*    sphereSt  = YADE_CAST<const State*>(&state1);
+// 			const State*    sphereSt  = YADE_CAST<const State*>(&state1);
 			GridConnection* gridCo    = YADE_CAST<GridConnection*>(GridList[connnum]->shape.get());
 			GridNode*       gridNo1   = YADE_CAST<GridNode*>(gridCo->node1->shape.get());
 			GridNode*       gridNo2   = YADE_CAST<GridNode*>(gridCo->node2->shape.get());
@@ -183,9 +184,9 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 			Vector3r segt = gridCo->getSegment();
 			Real len = gridCo->getLength();
 			
-			Vector3r spherePos = sphereSt->pos;
-			Vector3r branch = spherePos - gridNo1St->pos;
-			Vector3r branchN = spherePos - gridNo2St->pos;
+// 			Vector3r spherePos = sphereSt->pos;
+			Vector3r branch = centerS - gridNo1St->pos;
+			Vector3r branchN = centerS - gridNo2St->pos;
 			for(int i=0;i<3;i++){
 				if(std::abs(branch[i])<1e-14) branch[i]=0.0;
 				if(std::abs(branchN[i])<1e-14) branchN[i]=0.0;
@@ -347,7 +348,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 				relPos=relPos<0?0:relPos;	//min value of relPos : 0
 				relPos=relPos>1?1:relPos;	//max value of relPos : 1
 				Vector3r fictiousPos=gridNo1St->pos+relPos*segt;
-				Vector3r branchF = fictiousPos - spherePos;
+				Vector3r branchF = fictiousPos - centerS;
 
 				Real dist = branchF.norm();
 				bool SG= !(isNew && (dist > (sphere->radius + gridCo->radius)));
@@ -363,7 +364,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 					Vector3r normal=branchF/dist;
 					scm->penetrationDepth = sphere->radius+gridCo->radius-dist;
 					scm->fictiousState.pos = fictiousPos;
-					scm->contactPoint = spherePos + normal*(scm->radius1 - 0.5*scm->penetrationDepth);
+					scm->contactPoint = centerS + normal*(scm->radius1 - 0.5*scm->penetrationDepth);
 					scm->fictiousState.vel = (1-relPos)*gridNo1St->vel + relPos*gridNo2St->vel;
 					scm->fictiousState.angVel =
 						((1-relPos)*gridNo1St->angVel + relPos*gridNo2St->angVel).dot(segt/len)*segt/len //twist part : interpolated
