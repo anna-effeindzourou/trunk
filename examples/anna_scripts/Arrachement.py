@@ -10,42 +10,6 @@ from yade import utils,pack,geom,qt,export,ymport
 #except:
     #pass
 
-
-
-def hMax(n):
-	idHMax=0
-	hMax=-1000000.0
-	for i in O.bodies:
-		h=i.state.pos[n]
-		if (h>hMax):
-			hMax=h
-			idHMax=i.id
-	return (hMax)	
-
-
-def hMaxS(n):
-	idHMax=0
-	hMax=-1000000.0
-	for i in O.bodies:
-		if (type(i.shape)==Sphere):
-			h=i.state.pos[n]
-			if (h>hMax):
-				hMax=h
-				idHMax=i.id
-	return (hMax)	
-
-    
-def hMin(n):
-    idHMin=0
-    hMin=100000.0
-    for i in O.bodies:
-	h=i.state.pos[n]
-	if (h<hMin):
-	   hMin=h
-	   idHMin=i.id
-    return (hMin) 
- 
- 
 O.engines=[
 	ForceResetter(),
 	InsertionSortCollider([

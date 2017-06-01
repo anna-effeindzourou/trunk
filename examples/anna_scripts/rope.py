@@ -2,29 +2,6 @@ from yade import export,plot
 from yade.gridpfacet import *
 
 
-def hMinSpheres(n):
-	idHMin=0
-	hMin=100000.0
-	for i in O.bodies:
-		h=i.state.pos[n]
-		if (type(i.shape)==Sphere):
-			if (h<hMin):
-				hMin=h
-				idHMin=i.id
-	return (hMin)    
-	
-def hMaxSpheres(n):
-	idHMax=0
-	hMax=-1000000.0
-	for i in O.bodies:
-		h=i.state.pos[n]
-		if (type(i.shape)==Sphere):
-			if (h>hMax):
-				hMax=h
-				idHMax=i.id
-	return (hMax)	
-
-
 try:
 	os.mkdir('data')
 except:

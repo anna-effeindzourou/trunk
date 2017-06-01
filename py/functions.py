@@ -5,6 +5,19 @@
 # -*- coding: utf-8
 from yade import ymport, utils,pack,export,qt
 
+
+
+def hMaxS(n):
+	idHMax=0
+	hMax=-1000000.0
+	for i in O.bodies:
+		if (type(i.shape)==Sphere):
+			h=i.state.pos[n]
+			if (h>hMax):
+				hMax=h
+				idHMax=i.id
+	return (hMax)	
+
 def hMax(n):
 	idHMax=0
 	hMax=-1000000.0
@@ -25,6 +38,8 @@ def hMin(n):
 			hMin=h
 			idHMin=i.id
 	return (hMin)   
+
+
 
 def hMinSpheres(n):
 	idHMin=0
@@ -88,3 +103,30 @@ def limitfinder(DOFs):
 				bottom_boundary.append(b.id)
 				b.state.blockedDOFs = DOFs
 				b.shape.color=(1,0,0)	
+				
+				
+				
+def hMax(n):
+    idHMax=0
+    hMax=-1000000.0
+    for i in O.bodies:
+	h=i.state.pos[n]
+	if (h>hMax):
+	  hMax=h
+	  idHMax=i.id
+    return (hMax)	
+    
+    
+def hMin(n):
+    idHMin=0
+    hMin=100000.0
+    for i in O.bodies:
+	h=i.state.pos[n]
+	if (h<hMin):
+	   hMin=h
+	   idHMin=i.id
+    return (hMin)      
+  
+
+
+			
