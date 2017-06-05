@@ -48,35 +48,35 @@ g=0
 
 ####
 intRadius=1.5
-##########################
+##############
 ##	MATERIAL	##
-##########################
+##############
 membrane=O.materials.append(CFpmMat(young=young_wang,poisson=poisson_wang,density=density,frictionAngle=frictionAngle_mem))
-
 wallmat=O.materials.append(FrictMat(density=density,young=Kn_pw,poisson=poisson,frictionAngle=frictionAngle_pw))
-#membrane=O.materials.append(FrictMat(density=density,young=Kn_pw,poisson=poisson,frictionAngle=frictionAngle_pw))
 samplemat=O.materials.append(FrictMat(density=density,young=Kn_pp,poisson=poisson,frictionAngle=frictionAngle_pp))
 
-#membrane=O.materials.append(CFpmMat(young=young_wang,poisson=poisson_wang,density=density,frictionAngle=frictionAngle_wang))
+##########################
+##	ELEMENTS GENERATION	##
+##########################
 
-
-
-
+##	SPHERE PACKING  ##
 sp=yade._packSpheres.SpherePack()
 sp.load('fichier.txt')
 sp.toSimulation()
-#cyl=O.bodies.append(facetCylinder(center=Vector3(0,0,zmax/2.),radius=r_c+0.003, height=zmax-zmin))
+
+##	MEMBRANE   ##
 zmax=hMaxSpheres(2)
 r_c=r_c+4*r_scyl
 m=mem(r_c, n,zmin-0*r_scyl, zmax+0*r_scyl,hexa,membrane,mask)
-#m=utils.sphere(center=(0,0,0),color=(1,0,0),radius=r_scyl,material=membrane,mask=10)
+
 m_id=O.bodies.append(m)
 n_sp=len(m_id)
 Min_Max=MinMax()
-##walls
+
+
+##	TOP AND BOTTOM WALLS 	##
 top=O.bodies.append(utils.wall(position=(0,0,zmax+Min_Max[1]), axis=2,material=wallmat,mask=8))
 bottom=O.bodies.append(utils.wall(position=(0,0,zmin-Min_Max[1]), axis=2, material=wallmat,mask=8))
-
 
 #####################
 ##     FUNCTIONS   ##
@@ -96,20 +96,13 @@ O.engines=[
 		Ig2_Sphere_Sphere_ScGeom6D(label='ss2d3dg'),
 		Ig2_Wall_Sphere_ScGeom()],
 		[
-		  #Ip2_FrictMat_FrictMat_GravelPhys(alpha=1.0, krot=1.8, eta=1.8,psi_unloading=2, c=0,T=10000,b=1,power=True, label='part_part'),
 		  Ip2_FrictMat_FrictMat_FrictPhys(),
 		  Ip2_CFpmMat_CFpmMat_CFpmPhys(Alpha=0.098, Beta=1, cohesion=cohesion_wang, eta=1, strengthSoftening=1,tensileStrength=Tensile_wang, useAlphaBeta=False)
 		],
 		[
 		  Law2_ScGeom_FrictPhys_CundallStrack(),
-		  #Law2_ScGeom_GravelPhys_Plassiard(includeMoment=True, label='law'),
 		  Law2_ScGeom_CFpmPhys_CohesiveFrictionalPM()
 		  
 		  ]),
-	#PyRunner(initRun=True,iterPeriod=1,command='ajout_force()'),
-
 	NewtonIntegrator(damping=.7,gravity=(0,0,g),label='Newton'),
-	#ForceEngine(force=Vector3(Fx,Fy,12), ids=[0]),
-	#PyRunner(initRun=True,iterPeriod=1,command='dataCollector()'),
-	#VTKRecorder(iterPeriod=1000,initRun=True,fileName='paraview/'+O.tags['description']+'-',recorders=['spheres','velocity','intr'])
 	]
