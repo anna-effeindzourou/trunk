@@ -6,44 +6,7 @@ from yade import geom
 from yade import plot
 #from pylab import *
 #import os.path, locale
-
-
-def hMax(n):
-    idHMax=0
-    hMax=-1000000.0
-    for i in O.bodies:
-	h=i.state.pos[n]
-	if (h>hMax):
-	  hMax=h
-	  idHMax=i.id
-    return (hMax)	
-    
-    
-def hMin(n):
-    idHMin=0
-    hMin=100000.0
-    for i in O.bodies:
-	h=i.state.pos[n]
-	if (h<hMin):
-	   hMin=h
-	   idHMin=i.id
-    return (hMin)      
-#Function in order to calculate rmin (minimum radius) and rmax (maximum radius)
-def MinMax():
-    rmax=0
-    rmin=10
-    r=0
-    for i in O.bodies:
-      if(type(i.shape)==Sphere):
-	r=i.shape.radius
-	if(r>rmax):
-	  rmax=r
-	if(r<rmin):
-	  rmin=r
-    l=[rmin,rmax]
-    return (l)
-    
-   
+  
 O.engines=[
 	ForceResetter(),
 	InsertionSortCollider([
@@ -56,7 +19,6 @@ O.engines=[
 		Ig2_GridNode_GridNode_GridNodeGeom6D(),
 		Ig2_GridConnection_GridConnection_GridCoGridCoGeom(),
 		Ig2_Sphere_PFacet_ScGridCoGeom(),
-		#Ig2_PFacet_PFacet_ScGeom(),
 		Ig2_Sphere_Sphere_ScGeom(),
 		Ig2_Facet_Sphere_ScGeom(),
 		Ig2_Wall_Sphere_ScGeom()
@@ -115,15 +77,6 @@ O.dt=1.140175425099138e-05
 
 for i in range(0,40,4):
 	O.bodies.erase(i)
-
-#def writeFile():
-	#yade.export.text('spheres.txt')
-	
-#ymport.text('spheres.txt')
-#def sup():
-	#for i in O.bodies:
-		#if (type(i.shape)==Sphere) and (i.state.pos[2]>0.1):
-			#O.bodies.erase(i.id)
 
 #########################
 ### ENGINE DEFINITION  ##
