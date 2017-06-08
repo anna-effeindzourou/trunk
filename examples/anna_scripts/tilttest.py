@@ -83,7 +83,7 @@ O.engines=[
 ############################
 ### DEFINING MATERIAL    ###
 ############################
-O.materials.append(CohFrictMat(young=young_box,poisson=poison_box,density=density,frictionAngle=0,normalCohesion=1e19,shearCohesion=1e19,momentRotationLaw=False,alphaKr=5,label='NodeMat'))
+O.materials.append(CohFrictMat(young=young_box,poisson=poison_box,density=density,frictionAngle=0,normalCohesion=1e19,shearCohesion=1e19,momentRotationLaw=True,alphaKr=5,label='NodeMat'))
 
 boxMat = O.materials.append(FrictMat(young=young_box ,poisson=poison_box,frictionAngle=0,density=density))
 sphereMat = O.materials.append(FrictMat(young=young_box ,poisson=poison_box,frictionAngle=friction_box,density=density))
