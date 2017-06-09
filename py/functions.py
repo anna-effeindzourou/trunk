@@ -6,66 +6,51 @@
 from yade import ymport, utils,pack,export,qt
 
 
-
-def hMaxS(n):
-	idHMax=0
-	hMax=-1000000.0
-	for i in O.bodies:
-		if (type(i.shape)==Sphere):
-			h=i.state.pos[n]
-			if (h>hMax):
-				hMax=h
-				idHMax=i.id
-	return (hMax)	
-
-def hMax(n):
-	idHMax=0
-	hMax=-1000000.0
-	for i in O.bodies:
-		h = i.state.pos[n]
-		if (h>hMax):
-			hMax=h
-			idHMax=i.id
-	return (hMax)	
-    
-    
-def hMin(n):
-	idHMin=0
-	hMin=100000.0
-	for i in O.bodies:
-		h=i.state.pos[n]
-		if (h<hMin):
-			hMin=h
-			idHMin=i.id
-	return (hMin)   
-
-
-
-def hMinSpheres(n):
+def hMinT(n,typeB):
 	idHMin=0
 	hMin=100000.0
 	for i in O.bodies:
 		h=i.state.pos[n]-i.shape.radius
-		if (type(i.shape)==Sphere):
+		if (type(i.shape)==typeB):
 			if (h<hMin):
 				hMin=h
 				idHMin=i.id
 	res=[idHMin,hMin]
 	return (res) 
 	
-def hMaxSpheres(n):
+def hMaxT(n,typeB):
 	idHMax=0
 	hMax=-1000000.0
 	for i in O.bodies:
 		h=i.state.pos[n]+i.shape.radius
-		if (type(i.shape)==Sphere):
+		if (type(i.shape)==typeB):
 			if (h>hMax):
 				hMax=h
 				idHMax=i.id
 	res=[idHMax,hMax]
 	return (res)
 
-
+def hMaxGlobal(n):
+    idHMax=0
+    hMax=-1000000.0
+    for i in O.bodies:
+	h=i.state.pos[n]
+	if (h>hMax):
+	  hMax=h
+	  idHMax=i.id
+    return (hMax)	
+    
+    
+def hMinGlobal(n):
+    idHMin=0
+    hMin=100000.0
+    for i in O.bodies:
+	h=i.state.pos[n]
+	if (h<hMin):
+	   hMin=h
+	   idHMin=i.id
+    return (hMin)
+  
 #Function in order to calculate rmin (minimum radius) and rmax (maximum radius)
 def RMinMax():
 	rmax=0
@@ -102,31 +87,4 @@ def limitfinder(DOFs):
 			if isinstance(b.shape,GridNode):
 				bottom_boundary.append(b.id)
 				b.state.blockedDOFs = DOFs
-				b.shape.color=(1,0,0)	
-				
-				
-				
-def hMax(n):
-    idHMax=0
-    hMax=-1000000.0
-    for i in O.bodies:
-	h=i.state.pos[n]
-	if (h>hMax):
-	  hMax=h
-	  idHMax=i.id
-    return (hMax)	
-    
-    
-def hMin(n):
-    idHMin=0
-    hMin=100000.0
-    for i in O.bodies:
-	h=i.state.pos[n]
-	if (h<hMin):
-	   hMin=h
-	   idHMin=i.id
-    return (hMin)      
-  
-
-
-			
+				b.shape.color=(1,0,0)				
