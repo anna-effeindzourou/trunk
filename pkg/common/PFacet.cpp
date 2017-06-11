@@ -104,7 +104,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 		TIMING_DELTAS_CHECKPOINT("Ig2_Sphere_PFacet_ScGridCoGeom");
 		return false;
 	}
-	if (dist<0) {normal=-normal; dist=-dist;}
+// 	if (dist<0) {normal=-normal; dist=-dist;}
 
 	shared_ptr<Body> GridList[3]={Pfacet->conn1,Pfacet->conn2,Pfacet->conn3};
 
@@ -113,7 +113,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 	const bool isconn2=((p1 > 0) && (p2 > 0) && (p1 + p2 >= 1))||((p1 <= 0) && (p2 > 0) && (p1 + p2 >= 1));
 	const bool isconn3=((p1 <= 0) && (p2 > 0) && (p1 + p2 < 1))||((p1 <= 0) && (p2 <= 0) && (p1 + p2 < 1));
 	
-	Real penetrationDepth=0;
+// 	Real penetrationDepth=0;
 	int connnum=-1;
 
 	GridNode* GridNodeList[3]={ YADE_CAST<GridNode*>(Pfacet->node1->shape.get()), YADE_CAST<GridNode*>(Pfacet->node2->shape.get()),YADE_CAST<GridNode*>(Pfacet->node3->shape.get())};
@@ -411,7 +411,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 		}
 	}
 	if(isintriangle){
-		penetrationDepth = sphereRadius + PFacetradius - std::abs(dist);
+		Real penetrationDepth = sphereRadius + PFacetradius - std::abs(dist);
 		normal.normalize();
 		if (penetrationDepth>0 || c->isReal() ){
 			if(isNew) c->geom=scm;
