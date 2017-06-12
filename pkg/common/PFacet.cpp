@@ -120,8 +120,8 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 // 	If the contact projection is in the triangle, a search for an old contact is performed to export the information regarding the contact (phys)
 	if (isintriangle){ 
 		if(isNew){
-			for (int unsigned i=0; i<3;i++){
-				for(int unsigned j=0;j<GridNodeList[i]->pfacetList.size();j++){
+			for (unsigned int i=0; i<3;i++){
+				for(unsigned int j=0;j<GridNodeList[i]->pfacetList.size();j++){
 					if(GridNodeList[i]->pfacetList[j]->getId()!=c->id2){
 						boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> projectionPrev = projection(GridNodeList[i]->pfacetList[j]->shape,state1);
 						bool isintrianglePrev = boost::get<1>(projectionPrev);
@@ -152,16 +152,17 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 // 		check if the identified cylinder  previously is in contact with the sphere
 		if (connnum!=-1){
 			//verify if there is a contact between the a neighbouring PFacet, avoid double contacts
-			for (int unsigned i=0; i<3;i++){
-				for(int unsigned j=0;j<GridNodeList[i]->pfacetList.size();j++){
+			for (unsigned int i=0; i<3;i++){
+				for(unsigned int j=0;j<GridNodeList[i]->pfacetList.size();j++){
 					if(GridNodeList[i]->pfacetList[j]->getId()!=c->id2){
 						boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> projectionPrev = projection(GridNodeList[i]->pfacetList[j]->shape,state1);
-						bool isintrianglePrev = boost::get<1>(projectionPrev);
+						const bool isintrianglePrev = boost::get<1>(projectionPrev);
 						if(isintrianglePrev){
 							const shared_ptr<Interaction> intr = scene->interactions->find(c->id1,GridNodeList[i]->pfacetList[j]->getId());
 							if( intr && intr->isReal() ){// if an interaction exist between the sphere and the previous pfacet, import parameters.  
 								if (isNew){
-									return false;}
+									return false;
+								}
 								else {
 									scm->isDuplicate=1 ;
 									scm->trueInt=-1 ;
@@ -182,20 +183,20 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 			State*          gridNo2St = YADE_CAST<State*>(gridCo->node2->state.get());
 
 			Vector3r segt = gridCo->getSegment();
-			Real len = gridCo->getLength();
+			const Real len = gridCo->getLength();
 			
 // 			Vector3r spherePos = sphereSt->pos;
 			Vector3r branch = centerS - gridNo1St->pos;
 			Vector3r branchN = centerS - gridNo2St->pos;
-			for(int i=0;i<3;i++){
+			for(unsigned int i=0;i<3;i++){
 				if(std::abs(branch[i])<1e-14) branch[i]=0.0;
 				if(std::abs(branchN[i])<1e-14) branchN[i]=0.0;
 			}
-			Real relPos = branch.dot(segt)/(len*len);			
+			const Real relPos = branch.dot(segt)/(len*len);			
 			bool SGr=true;
 			if(relPos<=0){	// if the sphere projection is BEFORE the segment ...
 				if(gridNo1->ConnList.size()>1){//	if the node is not an extremity of the Grid (only one connection)
-					for(int unsigned i=0;i<gridNo1->ConnList.size();i++){	// ... loop on all the Connections of the same Node ...
+					for(unsigned int i=0;i<gridNo1->ConnList.size();i++){	// ... loop on all the Connections of the same Node ...
 						GridConnection* GC = (GridConnection*)gridNo1->ConnList[i]->shape.get();
 						if(GC==gridCo)continue;//	self comparison.
 						Vector3r segtCandidate1 = GC->node1->state->pos - gridNo1St->pos; // (be sure of the direction of segtPrev to compare relPosPrev.)
@@ -204,10 +205,10 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 						for(int j=0;j<3;j++){
 							if(std::abs(segtPrev[j])<1e-14) segtPrev[j]=0.0;
 						}
-						Real relPosPrev = (branch.dot(segtPrev))/(segtPrev.norm()*segtPrev.norm());
+						const Real relPosPrev = (branch.dot(segtPrev))/(segtPrev.norm()*segtPrev.norm());
 						// ... and check whether the sphere projection is before the neighbours connections too.
 						if(relPosPrev<=0){//if the sphere projection is outside both the current Connection AND this neighbouring connection, then create the interaction if the neighbour did not already do it before.
-							for(int unsigned j=0;j<GC->pfacetList.size();j++){
+							for(unsigned int j=0;j<GC->pfacetList.size();j++){
 								if(GC->pfacetList[j]->getId()!=c->id2){
 									const shared_ptr<Interaction> intr = scene->interactions->find(c->id1,GC->pfacetList[j]->getId());
 									
@@ -237,7 +238,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 			//Exactly the same but in the case the sphere projection is AFTER the segment.
 			else if(relPos>=1){
 				if(gridNo2->ConnList.size()>1){
-					for(int unsigned i=0;i<gridNo2->ConnList.size();i++){
+					for(unsigned int i=0;i<gridNo2->ConnList.size();i++){
 						GridConnection* GC = (GridConnection*)gridNo2->ConnList[i]->shape.get();
 						if(GC==gridCo)continue;//	self comparison.
 						Vector3r segtCandidate1 = GC->node1->state->pos - gridNo2St->pos;
@@ -247,9 +248,9 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 							if(std::abs(segtNext[j])<1e-14) segtNext[j]=0.0;
 						}
 						
-						Real relPosNext = (branchN.dot(segtNext))/(segtNext.norm()*segtNext.norm());
+						const Real relPosNext = (branchN.dot(segtNext))/(segtNext.norm()*segtNext.norm());
 						if(relPosNext<=0){ //if the sphere projection is outside both the current Connection AND this neighbouring connection, then create the interaction if the neighbour did not already do it before.
-							for(int unsigned j=0;j<GC->pfacetList.size();j++){
+							for(unsigned int j=0;j<GC->pfacetList.size();j++){
 								if(GC->pfacetList[j]->getId()!=c->id2){
 									const shared_ptr<Interaction> intr = scene->interactions->find(c->id1,GC->pfacetList[j]->getId());
 									if(intr && intr->isReal()){
@@ -275,7 +276,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 			}
 			else if (relPos<=0.5){
 				if(gridNo1->ConnList.size()>1){//	if the node is not an extremity of the Grid (only one connection)
-					for(int unsigned i=0;i<gridNo1->ConnList.size();i++){	// ... loop on all the Connections of the same Node ...
+					for(unsigned int i=0;i<gridNo1->ConnList.size();i++){	// ... loop on all the Connections of the same Node ...
 						GridConnection* GC = (GridConnection*)gridNo1->ConnList[i]->shape.get();
 						if(GC==gridCo)continue;//	self comparison.
 
@@ -287,7 +288,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 						}
 						Real relPosPrev = (branch.dot(segtPrev))/(segtPrev.norm()*segtPrev.norm());
 						if(relPosPrev<=0){ //the sphere projection is inside the current Connection and outide this neighbour connection.
-							for(int unsigned j=0;j<GC->pfacetList.size();j++){
+							for(unsigned int j=0;j<GC->pfacetList.size();j++){
 								if(GC->pfacetList[j]->getId()!=c->id2){
 									const shared_ptr<Interaction> intr = scene->interactions->find(c->id1,GC->pfacetList[j]->getId());
 									if( intr && intr->isReal() ){// if an ineraction exist between the sphere and the previous connection, import parameters.
@@ -313,7 +314,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 			
 			else if (relPos>0.5){
 				if(gridNo2->ConnList.size()>1){
-					for(int unsigned i=0;i<gridNo2->ConnList.size();i++){
+					for(unsigned int i=0;i<gridNo2->ConnList.size();i++){
 						GridConnection* GC = (GridConnection*)gridNo2->ConnList[i]->shape.get();
 						if(GC==gridCo)continue;//	self comparison.
 						Vector3r segtCandidate1 = GC->node1->state->pos - gridNo2St->pos;
@@ -324,7 +325,7 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 						}
 						Real relPosNext = (branchN.dot(segtNext))/(segtNext.norm()*segtNext.norm());
 						if(relPosNext<=0){ //the sphere projection is inside the current Connection and outside this neighbour connection.
-							for(int unsigned j=0;j<GC->pfacetList.size();j++){
+							for(unsigned int j=0;j<GC->pfacetList.size();j++){
 								if(GC->pfacetList[j]->getId()!=c->id2){
 									const shared_ptr<Interaction> intr = scene->interactions->find(c->id1,GC->pfacetList[j]->getId());
 									if( intr && intr->isReal() ){// if an ineraction exist between the sphere and the previous connection, import parameters.
@@ -376,8 +377,8 @@ bool Ig2_Sphere_PFacet_ScGridCoGeom::go(	const shared_ptr<Shape>& cm1,
 			}
 		}
 		else{//taking into account the shadow zone
-			for (int unsigned i=0; i<3;i++){
-				for(int unsigned j=0;j<GridNodeList[i]->pfacetList.size();j++){
+			for (unsigned int i=0; i<3;i++){
+				for(unsigned int j=0;j<GridNodeList[i]->pfacetList.size();j++){
 					if(GridNodeList[i]->pfacetList[j]->getId()!=c->id2){
 						boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> projectionPrev = projection(GridNodeList[i]->pfacetList[j]->shape,state1);
 						bool isintrianglePrev = boost::get<1>(projectionPrev);
