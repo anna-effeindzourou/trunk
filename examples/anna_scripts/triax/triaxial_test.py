@@ -12,55 +12,6 @@ from yade import plot
 #################################
 #####     FUNCTIONS          ####
 #################################
-def hMax(n):
-	idHMax=0
-	hMax=-1000000.0
-	for i in O.bodies:
-		h=i.state.pos[n]
-		if (h>hMax):
-			hMax=h
-			idHMax=i.id
-	hMax=hMax+O.bodies[idHMax].shape.radius
-	return (hMax)	
-    
-    
-def hMin(n):
-	idHMin=0
-	hMin=100000.0
-	for i in O.bodies:
-		h=i.state.pos[n]
-		if (h<hMin):
-			hMin=h
-			idHMin=i.id
-	hMin=hMin-O.bodies[idHMin].shape.radius
-	return (hMin)	    
-#Function in order to calculate rmin (minimum radius) and rmax (maximum radius)
-def MinMax():
-    rmax=0
-    rmin=10
-    r=0
-    for i in O.bodies:
-      if(type(i.shape)==Sphere):
-	r=i.shape.radius
-	if(r>rmax):
-	  rmax=r
-	if(r<rmin):
-	  rmin=r
-    l=[rmin,rmax]
-    return (l)
- 
-def sup():
-	for i in O.bodies:
-		if (type(i.shape)==Sphere) and (i.state.pos[2]>0.098):
-			O.bodies.erase(i.id)    
-  
-def scalar(u,v):
-	ps=u[0]*v[0]+u[1]*v[1]+u[2]*v[2]
-	return ps
-
-def cross(u,v):
-	ps=Vector3(u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2] ,u[0]*v[1]-u[1]*v[0])
-	return ps  
   
 def limitfinder():
 	for b in O.bodies:
