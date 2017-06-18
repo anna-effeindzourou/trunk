@@ -17,56 +17,6 @@ print 'rm=',rm
 #################################
 #####     FUNCTIONS          ####
 #################################
-def hMax(n):
-	idHMax=0
-	hMax=-1000000.0
-	for i in O.bodies:
-		h=i.state.pos[n]
-		if (h>hMax):
-			hMax=h
-			idHMax=i.id
-	hMax=hMax+O.bodies[idHMax].shape.radius
-	return (hMax)	
-    
-    
-def hMin(n):
-	idHMin=0
-	hMin=100000.0
-	for i in O.bodies:
-		h=i.state.pos[n]
-		if (h<hMin):
-			hMin=h
-			idHMin=i.id
-	hMin=hMin-O.bodies[idHMin].shape.radius
-	return (hMin)	    
-#Function in order to calculate rmin (minimum radius) and rmax (maximum radius)
-def MinMax():
-    rmax=0
-    rmin=10
-    r=0
-    for i in O.bodies:
-      if(type(i.shape)==Sphere):
-	r=i.shape.radius
-	if(r>rmax):
-	  rmax=r
-	if(r<rmin):
-	  rmin=r
-    l=[rmin,rmax]
-    return (l)
- 
-def sup():
-	for i in O.bodies:
-		if (type(i.shape)==Sphere) and (i.state.pos[2]>0.098):
-			O.bodies.erase(i.id)    
-  
-def scalar(u,v):
-	ps=u[0]*v[0]+u[1]*v[1]+u[2]*v[2]
-	return ps
-
-def cross(u,v):
-	ps=Vector3(u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2] ,u[0]*v[1]-u[1]*v[0])
-	return ps  
-  
 def limitfinder():
 	for b in O.bodies:
 		if(b.state.pos[2]>=L-2*radius):
@@ -162,12 +112,10 @@ frictionAngleW=0.228
 O.tags['description']='triaxial_rm_'+str(rm)+'_Emem_'+str(Emem)
 
 O.materials.append(CohFrictMat(young=Emem,poisson=poisson,density=density_mem,frictionAngle=0,normalCohesion=1e19,shearCohesion=1e19,momentRotationLaw=False,alphaKr=0,label='NodeMat'))
-
 O.materials.append(FrictMat(young=Emem,poisson=poisson,density=density_mem,frictionAngle=0,label='memMat'))
-
 O.materials.append(FrictMat(young=E,poisson=poisson,density=density,frictionAngle=frictionAngleW,label='Wallmat'))
-
 O.materials.append(FrictMat(young=E,poisson=poisson,density=density,frictionAngle=frictionAngle,label='Smat'))
+O.materials.append(FrictMat(young=E,poisson=poisson,density=density,frictionAngle=frictionAngleW,label='Wallmat'))
 
 
 ##############################
@@ -230,9 +178,9 @@ for i in range(0,nbL,1):
 #########################
 ##### WALL GENERATION  ##
 #########################
-O.materials.append(FrictMat(young=E,poisson=poisson,density=density,frictionAngle=frictionAngleW,label='Wallmat'))
 topPlate=utils.wall(position=hMax(2)+radius,sense=0, axis=2,color=Vector3(1,0,0),material='Wallmat')
 O.bodies.append(topPlate)
+
 bottomPlate=utils.wall(position=0,sense=0, axis=2,color=Vector3(1,0,0),material='Wallmat')
 O.bodies.append(bottomPlate)
 

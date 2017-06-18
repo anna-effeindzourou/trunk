@@ -7,53 +7,11 @@ from yade import plot
 #from pylab import *
 #import os.path, locale
 
-
-def hMax(n):
-	idHMax=0
-	hMax=-1000000.0
-	for i in O.bodies:
-		h=i.state.pos[n]
-		if (h>hMax) and (type(i.shape)==Sphere):
-			hMax=h
-			idHMax=i.id
-	return (hMax)	
-    
-    
-def hMin(n):
-    idHMin=0
-    hMin=100000.0
-    for i in O.bodies:
-	h=i.state.pos[n]
-	if (h<hMin):
-	   hMin=h
-	   idHMin=i.id
-    return (hMin)      
-#Function in order to calculate rmin (minimum radius) and rmax (maximum radius)
-def MinMax():
-    rmax=0
-    rmin=10
-    r=0
-    for i in O.bodies:
-      if(type(i.shape)==Sphere):
-	r=i.shape.radius
-	if(r>rmax):
-	  rmax=r
-	if(r<rmin):
-	  rmin=r
-    l=[rmin,rmax]
-    return (l)
-
-
-def sup(d):
-	for i in O.bodies:
-		if (type(i.shape)==Sphere) and (i.state.pos[2]>d):
-			O.bodies.erase(i.id)    
-  
+#################################
+#####     FUNCTIONS          ####
+#################################  
 def writeFile():
 	yade.export.text('spheres_1e-02.txt')
-
-
-
 
 ####################
 ###  MATERIAL    ###
