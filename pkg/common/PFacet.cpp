@@ -517,19 +517,19 @@ bool Ig2_PFacet_PFacet_ScGeom::go( const shared_ptr<Shape>& cm1, const shared_pt
 	boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> p5 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm2,* Pfacet1->node2->state);
 	boost::tuple <Vector3r,bool, double, double,double,Real,Vector3r> p6 = Ig2_Sphere_PFacet_ScGridCoGeom::projection(cm2,* Pfacet1->node3->state);
 	
-	bool isintriangle1 = boost::get<1>(p1);
-	bool isintriangle2 = boost::get<1>(p2);
-	bool isintriangle3 = boost::get<1>(p3);
+	const bool isintriangle1 = boost::get<1>(p1);
+	const bool isintriangle2 = boost::get<1>(p2);
+	const bool isintriangle3 = boost::get<1>(p3);
 	
 
 	
-	bool isintriangle4 = boost::get<1>(p4);
-	bool isintriangle5 = boost::get<1>(p5);
-	bool isintriangle6 = boost::get<1>(p6);
+	const bool isintriangle4 = boost::get<1>(p4);
+	const bool isintriangle5 = boost::get<1>(p5);
+	const bool isintriangle6 = boost::get<1>(p6);
 	
 	
-	bool istriangleNodes2P1 = (isintriangle1==true) && (isintriangle2==true)  && (isintriangle3==true);
-	bool istriangleNodes1P2 = (isintriangle4==true) && (isintriangle5==true)  && (isintriangle6==true);
+	const bool istriangleNodes2P1 = (isintriangle1==true) && (isintriangle2==true)  && (isintriangle3==true);
+	const bool istriangleNodes1P2 = (isintriangle4==true) && (isintriangle5==true)  && (isintriangle6==true);
 	
 	
 	if(istriangleNodes1P2 ){
@@ -620,17 +620,17 @@ bool Ig2_PFacet_PFacet_ScGeom::go( const shared_ptr<Shape>& cm1, const shared_pt
 		Vector3r seg23=(gridNo1StgridCo3P2->pos - gridNo2StgridCo3P2->pos)/(gridNo1StgridCo3P2->pos - gridNo2StgridCo3P2->pos).norm();
 		
 		
-		Real normal1seg21seg11= seg21.dot(seg11);
-		Real normal1seg21seg12= seg21.dot(seg12);
-		Real normal1seg21seg13= seg21.dot(seg13);
+		const Real normal1seg21seg11= seg21.dot(seg11);
+		const Real normal1seg21seg12= seg21.dot(seg12);
+		const Real normal1seg21seg13= seg21.dot(seg13);
 		
-		Real normal1seg22seg11= seg22.dot(seg11);
-		Real normal1seg22seg12= seg22.dot(seg12);
-		Real normal1seg22seg13= seg22.dot(seg13);
+		const Real normal1seg22seg11= seg22.dot(seg11);
+		const Real normal1seg22seg12= seg22.dot(seg12);
+		const Real normal1seg22seg13= seg22.dot(seg13);
 		
-		Real normal1seg23seg11= seg23.dot(seg11);
-		Real normal1seg23seg12= seg23.dot(seg12);
-		Real normal1seg23seg13= seg23.dot(seg13);
+		const Real normal1seg23seg11= seg23.dot(seg11);
+		const Real normal1seg23seg12= seg23.dot(seg12);
+		const Real normal1seg23seg13= seg23.dot(seg13);
 
 		Body::id_t ids1[3]={Pfacet1->conn1->getId(),Pfacet1->conn2->getId(),Pfacet1->conn3->getId()};
 		Body::id_t ids2[3]={Pfacet2->conn1->getId(),Pfacet2->conn2->getId(),Pfacet2->conn3->getId()};
