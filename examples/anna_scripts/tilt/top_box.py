@@ -167,21 +167,9 @@ def test():
 			nbodies.append(O.bodies[i])
 
 		clump,clumpIds=O.bodies.appendClumped(nbodies)
-		#O.bodies[clump].state.blockedDOFs='xyzXYZ'
 	else:
 		for i in nodesIds1:
 			O.bodies[i].state.blockedDOFs='xyzXYZ'
-
-#test()
-#kw={'color':[0.8,0.8,0.8],'wire':False,'dynamic':True,'material':2}
-#pile=ymport.text('spheres.txt',**kw)
-#pile2=O.bodies.append(pile)
-
-
-#for i in pile2:
-	#if(O.bodies[i].state.pos[2]>0.203):
-		#O.bodies.erase(i)
-
 
 
 ############################
@@ -199,25 +187,7 @@ O.engines+=[
 init=0
 para=1000
 coll=100
-#def rotate():
-	#global init
-	#init=O.iter
-	#Newton_Integrator.damping=0.2
-	
-	
-	##if(clumpbox==True):
-		##O.bodies[clump].state.blockedDOFs='x'
-	##else:
-		##for i in nodesIds1:
-			##O.bodies[i].state.blockedDOFs='x'	
-	#O.engines+=[
-		#RotationEngine(ids=idsToRotate,angularVelocity=angularVelocity,rotateAroundZero=True,zeroPoint=(-rWall,0,0),rotationAxis=(1,0,0),label='rotationEngine'),
-		#VTKRecorder(iterPeriod=para,dead=False,initRun=True,fileName='paraview/'+O.tags['description']+'_',recorders=['spheres','velocity','intr','materialId'],label='parav'),
-		#PyRunner(initRun=True,iterPeriod=coll,command='dataCollector()')
-	#]
-	
-#test()
-	
+
 #####################
 #####   SAVE DATA   ##
 ###################### 	
@@ -229,11 +199,6 @@ plot.plot(subPlots=True)
     
 def saveData():
 	plot.saveDataTxt(O.tags['description']+'.dat.bz2',vars=('t1','unbF','y','vy'))
-
-
-
-#Plate=utils.wall(position=h+fac*rWall-0.01,sense=0, axis=2,color=Vector3(1,0,0),material=boxMat)
-#O.bodies.append(Plate)
 
 
 ############################
